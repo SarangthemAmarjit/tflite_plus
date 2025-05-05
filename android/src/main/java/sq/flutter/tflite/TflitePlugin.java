@@ -86,9 +86,12 @@ public class TflitePlugin implements FlutterPlugin, MethodCallHandler {
   List<Integer> childToParentEdges = new ArrayList<>();
   private Context applicationContext;
   private MethodChannel channel;
+  private FlutterPluginBinding flutterPluginBinding;
+
 
 @Override
 public void onAttachedToEngine(FlutterPlugin.FlutterPluginBinding flutterPluginBinding) {
+   this.flutterPluginBinding = flutterPluginBinding;
     applicationContext = flutterPluginBinding.getApplicationContext();
     channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "tflite");
     channel.setMethodCallHandler(this);
