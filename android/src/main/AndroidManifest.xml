@@ -1,10 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="sq.flutter.tflite">
 
-    <application
-        android:name="io.flutter.app.FlutterApplication"
-        android:label="tflite"
-        android:icon="@mipmap/ic_launcher">
+    <application>
 
         <!-- ✅ Legacy embedding setting -->
         <meta-data
