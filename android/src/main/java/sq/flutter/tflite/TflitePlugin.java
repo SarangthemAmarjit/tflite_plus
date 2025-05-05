@@ -56,7 +56,7 @@ import java.util.Vector;
 
 
 public class TflitePlugin implements FlutterPlugin, MethodCallHandler {
-  private final Registrar mRegistrar;
+
   private Interpreter tfLite;
   private boolean tfLiteBusy = false;
   private int inputSize = 0;
@@ -213,8 +213,8 @@ public void onDetachedFromEngine(FlutterPlugin.FlutterPluginBinding binding) {
     String key = null;
     AssetManager assetManager = null;
     if (isAsset) {
-     assetManager = pluginBinding.getApplicationContext().getAssets();
-key = pluginBinding.getFlutterAssets().getAssetFilePathByName(model);
+      assetManager = pluginBinding.getApplicationContext().getAssets();
+      key = pluginBinding.getFlutterAssets().getAssetFilePathByName(model);
       AssetFileDescriptor fileDescriptor = assetManager.openFd(key);
       FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
       FileChannel fileChannel = inputStream.getChannel();
