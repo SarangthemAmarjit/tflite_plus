@@ -23,7 +23,10 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
+
+
+
 
 import org.tensorflow.lite.DataType;
 import org.tensorflow.lite.Interpreter;
@@ -52,7 +55,7 @@ import java.util.PriorityQueue;
 import java.util.Vector;
 
 
-public class TflitePlugin implements MethodCallHandler {
+public class TflitePlugin implements FlutterPlugin, MethodCallHandler {
   private final Registrar mRegistrar;
   private Interpreter tfLite;
   private boolean tfLiteBusy = false;
@@ -82,14 +85,19 @@ public class TflitePlugin implements MethodCallHandler {
   List<Integer> parentToChildEdges = new ArrayList<>();
   List<Integer> childToParentEdges = new ArrayList<>();
 
-  public static void registerWith(Registrar registrar) {
-    final MethodChannel channel = new MethodChannel(registrar.messenger(), "tflite");
-    channel.setMethodCallHandler(new TflitePlugin(registrar));
-  }
+private MethodChannel channel;
 
-  private TflitePlugin(Registrar registrar) {
-    this.mRegistrar = registrar;
-  }
+@Override
+public void onAttachedToEngine(FlutterPlugin.FlutterPluginBinding flutterPluginBinding) {
+    channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "tflite");
+    channel.setMethodCallHandler(this);
+}
+
+@Override
+public void onDetachedFromEngine(FlutterPlugin.FlutterPluginBinding binding) {
+    channel.setMethodCallHandler(null);
+}
+
 
   @Override
   public void onMethodCall(MethodCall call, Result result) {
@@ -205,8 +213,8 @@ public class TflitePlugin implements MethodCallHandler {
     String key = null;
     AssetManager assetManager = null;
     if (isAsset) {
-      assetManager = mRegistrar.context().getAssets();
-      key = mRegistrar.lookupKeyForAsset(model);
+     assetManager = pluginBinding.getApplicationContext().getAssets();
+key = pluginBinding.getFlutterAssets().getAssetFilePathByName(model);
       AssetFileDescriptor fileDescriptor = assetManager.openFd(key);
       FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
       FileChannel fileChannel = inputStream.getChannel();
