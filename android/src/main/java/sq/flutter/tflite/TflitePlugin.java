@@ -84,11 +84,12 @@ public class TflitePlugin implements FlutterPlugin, MethodCallHandler {
   Map<String, Integer> partsIds = new HashMap<>();
   List<Integer> parentToChildEdges = new ArrayList<>();
   List<Integer> childToParentEdges = new ArrayList<>();
-
-private MethodChannel channel;
+  private Context applicationContext;
+  private MethodChannel channel;
 
 @Override
 public void onAttachedToEngine(FlutterPlugin.FlutterPluginBinding flutterPluginBinding) {
+    applicationContext = flutterPluginBinding.getApplicationContext();
     channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "tflite");
     channel.setMethodCallHandler(this);
 }
@@ -213,7 +214,7 @@ public void onDetachedFromEngine(FlutterPlugin.FlutterPluginBinding binding) {
     String key = null;
     AssetManager assetManager = null;
     if (isAsset) {
-      assetManager = pluginBinding.getApplicationContext().getAssets();
+      assetManager = applicationContext.getAssets();
       key = pluginBinding.getFlutterAssets().getAssetFilePathByName(model);
       AssetFileDescriptor fileDescriptor = assetManager.openFd(key);
       FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
@@ -246,7 +247,7 @@ public void onDetachedFromEngine(FlutterPlugin.FlutterPluginBinding binding) {
 
     if (labels.length() > 0) {
       if (isAsset) {
-        key = mRegistrar.lookupKeyForAsset(labels);
+        key = pluginBinding.getFlutterAssets().getAssetFilePathByName(labels);
         loadLabels(assetManager, key);
       } else {
         loadLabels(null, labels);
@@ -419,7 +420,7 @@ public void onDetachedFromEngine(FlutterPlugin.FlutterPluginBinding binding) {
 
     Bitmap bitmapRaw = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.ARGB_8888);
     Allocation bmData = renderScriptNV21ToRGBA888(
-        mRegistrar.context(),
+        applicationContext,
         imageWidth,
         imageHeight,
         data);
