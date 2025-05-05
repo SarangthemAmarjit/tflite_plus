@@ -215,7 +215,7 @@ public void onDetachedFromEngine(FlutterPlugin.FlutterPluginBinding binding) {
     AssetManager assetManager = null;
     if (isAsset) {
       assetManager = applicationContext.getAssets();
-      key = pluginBinding.getFlutterAssets().getAssetFilePathByName(model);
+      key = flutterPluginBinding.getFlutterAssets().getAssetFilePathByName(model);
       AssetFileDescriptor fileDescriptor = assetManager.openFd(key);
       FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
       FileChannel fileChannel = inputStream.getChannel();
@@ -247,7 +247,7 @@ public void onDetachedFromEngine(FlutterPlugin.FlutterPluginBinding binding) {
 
     if (labels.length() > 0) {
       if (isAsset) {
-        key = pluginBinding.getFlutterAssets().getAssetFilePathByName(labels);
+        key = flutterPluginBinding.getFlutterAssets().getAssetFilePathByName(labels);
         loadLabels(assetManager, key);
       } else {
         loadLabels(null, labels);
